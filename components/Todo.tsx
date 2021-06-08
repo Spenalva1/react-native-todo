@@ -7,6 +7,7 @@ import Header from './Header';
 import { useDarkMode } from '../providers/darkModeContext';
 import GlobalStyle from '../styles/GlobalStyle';
 import useLocal from '../providers/useLocal';
+import Form from './Form';
 
 export interface Todo {
   name: string,
@@ -41,6 +42,7 @@ export default function Todo() {
       <Image source={darkMode ? bgDark : bgLight} style={styles.bgImage}/>
       <StatusBarSpace />
       <Header />
+      <Form />
     </View>
   )
 }

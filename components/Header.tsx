@@ -11,7 +11,6 @@ export default function Header() {
   return (
     <View style={styles.header}>
       <Text style={styles.title}>TODO</Text>
-      {/* <CheckGradient onPress={() => toggleDarkMode()} style={styles.icon}/> */}
       {darkMode 
         ? <Sun onPress={() => toggleDarkMode()} style={styles.icon}/>
         : <Moon onPress={() => toggleDarkMode()} style={styles.icon}/>

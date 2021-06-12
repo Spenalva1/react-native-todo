@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ScrollView, Dimensions, Image, StyleSheet } from 'react-native';
 import StatusBarSpace from './StatusBarSpace';
 import bgLight from '../assets/images/bg-light.jpg';
@@ -9,6 +9,7 @@ import GlobalStyle from '../styles/GlobalStyle';
 import useLocal from '../providers/useLocal';
 import Form from './Form';
 import TodoList from './TodoList';
+import TodoFilter from './TodoFilter';
 
 export interface Todo {
   name: string,
@@ -16,9 +17,12 @@ export interface Todo {
   id: string
 }
 
+export type Filter = 'ALL' | 'ACTIVE' | 'COMPLETED';
+
 export default function Todo() {
   const {darkMode} = (useDarkMode() as {darkMode: boolean});
   const [todos, setTodos] = (useLocal('TODOS', []) as [Todo[], Function]);
+  const [activeFilter, setActiveFilter] = useState<Filter>('ALL');  
 
   const newTodo = (name:string, check = false) => {
     setTodos([...todos, {name, check, id: new Date().valueOf().toString()}]);
@@ -36,7 +40,6 @@ export default function Todo() {
     setTodos(todos.filter(todo => !todo.check));
   }
   
-  
   return (
     <ScrollView style={{flex: 1, paddingBottom: 24, backgroundColor: darkMode ? colorSet.darkVeryDarkBlue : colorSet.lightVeryLightGray}}>
       <Image source={darkMode ? bgDark : bgLight} style={styles.bgImage}/>
@@ -48,7 +51,9 @@ export default function Todo() {
         clearCompleted={clearCompleted}
         deleteTodo={deleteTodo}
         toggleTodoCheck={toggleTodoCheck}
+        activeFilter={activeFilter}
       />
+      <TodoFilter setActiveFilter={setActiveFilter} activeFilter={activeFilter} />
     </ScrollView>
   )
 }

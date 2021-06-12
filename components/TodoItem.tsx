@@ -27,7 +27,7 @@ export default function TodoItem({todo, toggleTodoCheck, deleteTodo}: TodoItemPr
       <View style={styles.checkCtn}>
         <CheckButton check={todo.check} toggleCheck={toggleTodoCheck} />
       </View>
-      <Text style={[styles.name, darkMode ? styles.nameDark as StyleProp<ViewStyle> : styles.nameLight as StyleProp<ViewStyle>]}>{todo.name}</Text>
+      <Text style={[styles.name, setTextStyle(darkMode, todo.check)]}>{todo.name}</Text>
       <Pressable style={mergePressableStyles(styles.delete, styles.deletePress)} onPress={() => deleteTodo()}>
         <Cross />
       </Pressable>
@@ -35,8 +35,20 @@ export default function TodoItem({todo, toggleTodoCheck, deleteTodo}: TodoItemPr
   )
 }
 
-const {colorSet, fontSet} = GlobalStyle;
+const setTextStyle = (darkMode: boolean, check: boolean) => {
+  if (darkMode && check) {
+    return styles.nameDarkChecked;
+  }
+  if (darkMode) {
+    return styles.nameDark;
+  }
+  if (check) {
+    return styles.nameLightChecked;
+  }
+  return styles.nameLight;
+}
 
+const {colorSet, fontSet} = GlobalStyle;
 
 const styles = StyleSheet.create({
   item: {
@@ -68,8 +80,16 @@ const styles = StyleSheet.create({
   nameLight: {
     color: colorSet.lightVeryDarkGrayishBlue
   },
+  nameLightChecked: {
+    color: colorSet.lightDarkGrayishBlue,
+    textDecorationLine: 'line-through',
+  },
   nameDark: {
     color: colorSet.darkLightGrayishBlue
+  },
+  nameDarkChecked: {
+    color: colorSet.darkVeryDarkGrayishBlue,
+    textDecorationLine: 'line-through',
   },
   delete: {
     padding: 16

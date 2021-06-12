@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     fontFamily: fontSet.Regular,
   },
   footerTextDark: {
-    color: colorSet.darkLightGrayishBlue
+    color: colorSet.darkVeryDarkGrayishBlue
   },
   footerTextLight: {
     color: colorSet.lightDarkGrayishBlue

@@ -3,26 +3,48 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import GlobalStyles from '../styles/GlobalStyle';
 import CheckGradient from './icons/CheckGradient';
 import { useDarkMode } from '../providers/darkModeContext';
-import GlobalStyle from '../styles/GlobalStyle';
 import Check from './icons/Check';
+import { useRef } from 'react';
 
-export default function Form() {
-  const {darkMode, toggleDarkMode} = useDarkMode();
-  const [name, setName] = useState<String>('');
+interface FormProps {
+  newTodo: (name: string, check?: boolean) => void;
+}
+
+export default function Form({newTodo}: FormProps) {
+  const {darkMode} = useDarkMode();
+  const [name, setName] = useState<string>('');
   const [check, setCheck] = useState<boolean>(false);
+  const input = useRef(null);
+  
+  const onSubmitEditing = () => {
+    if(name.length < 1) return;
+    newTodo(name, check);
+    setName('');
+    setCheck(false);
+  }
   
   return (
     <View style={styles.container}>
-      <View style={styles.form}>
+      <View style={[styles.form, darkMode ? styles.formDark : styles.formLight]}>
         <Pressable style={styles.checkButton} onPress={() => setCheck(prev => !prev)}>
           {check && <CheckGradient />}
           {check && <Check style={styles.check} />}
         </Pressable>
-        <TextInput onChangeText={(value) => setName(value)} placeholder="Create a new todo..." style={styles.input}></TextInput>
+        <TextInput 
+        ref={input}
+        value={name}
+        onChangeText={(text) => setName(text)} 
+        blurOnSubmit={false}
+        onSubmitEditing={onSubmitEditing}
+        placeholder="Create a new todo..." 
+        placeholderTextColor={darkMode ? GlobalStyles.colorSet.darkLightGrayishBlue : GlobalStyles.colorSet.lightVeryDarkGrayishBlue} 
+        style={[styles.input, darkMode ? styles.inputDark : styles.inputLight]} />
       </View>
     </View>
   )
 }
+
+const {colorSet, fontSet} = GlobalStyles;
 
 const styles = StyleSheet.create({
   container: {
@@ -41,8 +63,13 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    
     elevation: 5,
+  },
+  formLight: {
+    backgroundColor: '#fff'
+  },
+  formDark: {
+    backgroundColor: colorSet.darkVeryDarkDesaturatedBlue
   },
   checkButton: {
     width: 30,
@@ -76,6 +103,13 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontFamily: GlobalStyle.fontSet.Regular
-  }
+    fontFamily: fontSet.Regular,
+    fontSize: 16
+  },
+  inputLight: {
+    color: colorSet.lightVeryDarkGrayishBlue
+  },
+  inputDark: {
+    color: colorSet.darkLightGrayishBlue
+  },
 })

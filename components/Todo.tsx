@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Dimensions, Image, StyleSheet, View } from 'react-native';
+import { Button, Dimensions, Image, StyleSheet, View, FlatList, ListRenderItem } from 'react-native';
 import StatusBarSpace from './StatusBarSpace';
 import bgLight from '../assets/images/bg-light.jpg';
 import bgDark from '../assets/images/bg-dark.jpg';
@@ -8,6 +8,7 @@ import { useDarkMode } from '../providers/darkModeContext';
 import GlobalStyle from '../styles/GlobalStyle';
 import useLocal from '../providers/useLocal';
 import Form from './Form';
+import TodoItem from './TodoItem';
 
 export interface Todo {
   name: string,
@@ -18,7 +19,10 @@ export interface Todo {
 export default function Todo() {
   const {darkMode} = (useDarkMode() as {darkMode: boolean});
   const [todos, setTodos] = (useLocal('TODOS', []) as [Todo[], Function]);
-  // console.log(todos);
+  
+  // const renderTodoItem: any = ({ todo }: {todo: Todo}) => (
+  //   <TodoItem todo={todo} />
+  // );
 
   const newTodo = (name:string, check = false) => {
     setTodos([...todos, {name, check, id: new Date().valueOf()}])
@@ -42,7 +46,14 @@ export default function Todo() {
       <Image source={darkMode ? bgDark : bgLight} style={styles.bgImage}/>
       <StatusBarSpace />
       <Header />
-      <Form />
+      <Form newTodo={newTodo} />
+      <View>
+        <FlatList 
+        style={[styles.list, darkMode ? styles.listDark : styles.listLight]}
+        data={todos} 
+        renderItem={({item}) => <TodoItem todo={item} />} 
+        keyExtractor={todo => todo.id} />
+      </View>
     </View>
   )
 }
@@ -66,5 +77,26 @@ const styles = StyleSheet.create({
   text: {
     backgroundColor: 'red',
     color: '#000',
-  }
+  },
+  list: {
+    paddingStart: 24,
+    paddingEnd: 24,
+    marginStart: 24,
+    marginEnd: 24,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  listDark: {
+    backgroundColor: colorSet.darkVeryDarkDesaturatedBlue
+  },
+  listLight: {
+    backgroundColor: '#fff'
+  },
 });

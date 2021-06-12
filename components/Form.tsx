@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import GlobalStyles from '../styles/GlobalStyle';
-import CheckGradient from './icons/CheckGradient';
 import { useDarkMode } from '../providers/darkModeContext';
-import Check from './icons/Check';
-import { useRef } from 'react';
+import CheckButton from './CheckButton'
 
 interface FormProps {
   newTodo: (name: string, check?: boolean) => void;
@@ -14,7 +12,6 @@ export default function Form({newTodo}: FormProps) {
   const {darkMode} = useDarkMode();
   const [name, setName] = useState<string>('');
   const [check, setCheck] = useState<boolean>(false);
-  const input = useRef(null);
   
   const onSubmitEditing = () => {
     if(name.length < 1) return;
@@ -26,12 +23,8 @@ export default function Form({newTodo}: FormProps) {
   return (
     <View style={styles.container}>
       <View style={[styles.form, darkMode ? styles.formDark : styles.formLight]}>
-        <Pressable style={styles.checkButton} onPress={() => setCheck(prev => !prev)}>
-          {check && <CheckGradient />}
-          {check && <Check style={styles.check} />}
-        </Pressable>
+        <CheckButton check={check} toggleCheck={() => setCheck(check => !check)} />
         <TextInput 
-        ref={input}
         value={name}
         onChangeText={(text) => setName(text)} 
         blurOnSubmit={false}
@@ -71,40 +64,11 @@ const styles = StyleSheet.create({
   formDark: {
     backgroundColor: colorSet.darkVeryDarkDesaturatedBlue
   },
-  checkButton: {
-    width: 30,
-    height: 30,
-    marginRight: 20,
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 50,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    position: 'relative'
-  },
-  check: {
-    width: 30,
-    height: 30,
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    transform: [
-      {
-        translateY: -4.5,
-      }, {
-        translateX: -4.5,
-      },
-      {
-        scale: 1.3
-      }
-    ]
-  },
   input: {
     flex: 1,
     fontFamily: fontSet.Regular,
-    fontSize: 16
+    fontSize: 16,
+    marginLeft: 20
   },
   inputLight: {
     color: colorSet.lightVeryDarkGrayishBlue

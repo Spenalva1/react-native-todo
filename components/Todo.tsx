@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Dimensions, Image, StyleSheet, View, FlatList, ListRenderItem } from 'react-native';
+import { ScrollView, Dimensions, Image, StyleSheet } from 'react-native';
 import StatusBarSpace from './StatusBarSpace';
 import bgLight from '../assets/images/bg-light.jpg';
 import bgDark from '../assets/images/bg-dark.jpg';
@@ -8,28 +8,24 @@ import { useDarkMode } from '../providers/darkModeContext';
 import GlobalStyle from '../styles/GlobalStyle';
 import useLocal from '../providers/useLocal';
 import Form from './Form';
-import TodoItem from './TodoItem';
+import TodoList from './TodoList';
 
 export interface Todo {
   name: string,
   check: boolean,
-  id: any
+  id: string
 }
 
 export default function Todo() {
   const {darkMode} = (useDarkMode() as {darkMode: boolean});
   const [todos, setTodos] = (useLocal('TODOS', []) as [Todo[], Function]);
-  
-  // const renderTodoItem: any = ({ todo }: {todo: Todo}) => (
-  //   <TodoItem todo={todo} />
-  // );
 
   const newTodo = (name:string, check = false) => {
-    setTodos([...todos, {name, check, id: new Date().valueOf()}])
+    setTodos([...todos, {name, check, id: new Date().valueOf().toString()}]);
   }
 
   const toggleTodoCheck = (id: any) => {
-    setTodos(todos.map(todo => todo.id === id ? ({...todo, check: !todo.check}) : todo ))
+    setTodos(todos.map(todo => todo.id === id ? ({...todo, check: !todo.check}) : todo ));
   }
 
   const deleteTodo = (id: any) => {
@@ -42,19 +38,18 @@ export default function Todo() {
   
   
   return (
-    <View style={{flex: 1, backgroundColor: darkMode ? colorSet.darkVeryDarkBlue : colorSet.lightVeryLightGray}}>
+    <ScrollView style={{flex: 1, paddingBottom: 24, backgroundColor: darkMode ? colorSet.darkVeryDarkBlue : colorSet.lightVeryLightGray}}>
       <Image source={darkMode ? bgDark : bgLight} style={styles.bgImage}/>
       <StatusBarSpace />
       <Header />
       <Form newTodo={newTodo} />
-      <View>
-        <FlatList 
-        style={[styles.list, darkMode ? styles.listDark : styles.listLight]}
-        data={todos} 
-        renderItem={({item}) => <TodoItem todo={item} />} 
-        keyExtractor={todo => todo.id} />
-      </View>
-    </View>
+      <TodoList 
+        todos={todos} 
+        clearCompleted={clearCompleted}
+        deleteTodo={deleteTodo}
+        toggleTodoCheck={toggleTodoCheck}
+      />
+    </ScrollView>
   )
 }
 
@@ -69,34 +64,5 @@ const styles = StyleSheet.create({
     zIndex: 0,
     top: 0,
     left: 0,
-  },
-  container: {
-    backgroundColor: 'blue',
-    zIndex: 1,
-  },
-  text: {
-    backgroundColor: 'red',
-    color: '#000',
-  },
-  list: {
-    paddingStart: 24,
-    paddingEnd: 24,
-    marginStart: 24,
-    marginEnd: 24,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  listDark: {
-    backgroundColor: colorSet.darkVeryDarkDesaturatedBlue
-  },
-  listLight: {
-    backgroundColor: '#fff'
   },
 });
